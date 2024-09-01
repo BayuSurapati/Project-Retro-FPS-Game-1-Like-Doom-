@@ -21,7 +21,13 @@ public class EnemyController : MonoBehaviour
     public GameObject bullet;
     public Transform firePoint;
 
+    public GameObject healthToDrops;
+    public GameObject ammoToDrops;
+    public float healthToDropChance, ammoToDropChance;
+
     public AudioSource laserEnemy;
+
+    //public Animator enemyAnim;
 
     // Start is called before the first frame update
     void Start()
@@ -38,6 +44,8 @@ public class EnemyController : MonoBehaviour
             Vector3 playerDirection = PlayerController.instance.transform.position - transform.position;
 
             theRB.velocity = playerDirection.normalized * moveSpeed;
+            //enemyAnim.SetBool("Moving", true);
+            //enemyAnim.SetBool("Idle", false);
 
             if (shouldShoot)
             {
@@ -55,6 +63,8 @@ public class EnemyController : MonoBehaviour
         {
             theRB.velocity = Vector2.zero;
             laserEnemy.Stop();
+            //enemyAnim.SetBool("Moving", false);
+            //enemyAnim.SetBool("Idle", true);
         }
     }
 
@@ -66,6 +76,15 @@ public class EnemyController : MonoBehaviour
         {
             Destroy(gameObject);
             Instantiate(explosions, transform.position, transform.rotation);
+
+            if (Random.Range(0f, 100f) < healthToDropChance && healthToDrops != null)
+            {
+                Instantiate(healthToDrops, transform.position, transform.rotation);
+            }
+            if (Random.Range(0f, 100f) < ammoToDropChance && ammoToDrops != null)
+            {
+                Instantiate(ammoToDrops, transform.position, transform.rotation);
+            }
         }
     }
 }

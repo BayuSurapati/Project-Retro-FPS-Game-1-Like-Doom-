@@ -22,10 +22,12 @@ public class AmmoPickup : MonoBehaviour
     {
         if(other.tag == "Player")
         {
-            PlayerController.instance.currentAmmo += ammoAmount;
-            PlayerController.instance.UpdateAmmoUI();
-
-            Destroy(gameObject);
+            if(PlayerController.instance.currentAmmo < PlayerController.instance.maxAmmo)
+            {
+                PlayerController.instance.currentAmmo += ammoAmount;
+                //WeaponController.instance.UpdateAmmoUI();
+                Destroy(gameObject);
+            }
         }
     }
 }

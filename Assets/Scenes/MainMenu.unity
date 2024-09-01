@@ -717,7 +717,7 @@ MonoBehaviour:
   controlPanel: {fileID: 0}
   sceneToLoad: 
   sceneTutor: Tutorial
-  play: TestLevel
+  play: Level1
 --- !u!1 &1461826156
 GameObject:
   m_ObjectHideFlags: 0

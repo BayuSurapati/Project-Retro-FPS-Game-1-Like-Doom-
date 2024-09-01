@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    WeaponController weaponController;
     public static PlayerController instance;
 
     public Rigidbody2D theRB;
@@ -27,8 +28,9 @@ public class PlayerController : MonoBehaviour
 
     public GameObject bulletImpact;
     public int currentAmmo;
+    public int maxAmmo;
 
-    public Animator gunAnim;
+    //public Animator gunAnim;
     public Animator animPlayer;
 
     public GameObject deathScreen;
@@ -37,7 +39,8 @@ public class PlayerController : MonoBehaviour
     public Text healthText, ammoText;
 
     
-    public AudioSource gunFire;
+    //public AudioSource gunFire;
+    //public GameObject cheat;
 
     private void Awake()
     {
@@ -46,13 +49,15 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        weaponController = GameObject.FindGameObjectWithTag("Weapon").GetComponent<WeaponController>();
+
         currentHealth = maxHealth;
+        currentAmmo = maxAmmo;
 
         healthText.text = currentHealth.ToString() + "%";
 
         ammoText.text = currentAmmo.ToString();
-
-        gunFire = GetComponent<AudioSource>();
+        //gunFire = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -67,6 +72,11 @@ public class PlayerController : MonoBehaviour
             Vector3 moveVertical = transform.right * moveInput.y;
 
             theRB.velocity = ((IsSprinting ? sprintSpeed : moveSpeed) * (moveHorizontal + moveVertical));
+            if (Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                Debug.Log("Sprint");
+            }
+
             /*if (Input.GetKeyDown(KeyCode.LeftShift))
             {
                 theRB.velocity = (moveHorizontal + moveVertical) * sprintSpeed;
@@ -86,7 +96,10 @@ public class PlayerController : MonoBehaviour
             viewCam.transform.localRotation = Quaternion.Euler(viewCam.transform.localRotation.eulerAngles + new Vector3(0f, mouseInput.y, 0f));
 
             //Player Shooting
-            if (Input.GetMouseButtonDown(0))
+            weaponController.WeaponWorks();
+            UpdateAmmoUI();
+
+            /*if (Input.GetMouseButtonDown(0))
             {
                 if (currentAmmo > 0)
                 {
@@ -116,7 +129,7 @@ public class PlayerController : MonoBehaviour
                     UpdateAmmoUI();
                     gunFire.Play();
                 }
-            }
+            }*/
 
             if(moveInput != Vector2.zero)
             {
@@ -124,7 +137,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                animPlayer.SetBool("isMoving", false);
+                animPlayer.SetBool("isMoving", false    );
             }
         }
 
@@ -158,8 +171,25 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void SetAmmo()
+    {
+        if (weaponController)
+        {
+            currentAmmo--;
+            UpdateAmmoUI();
+        }
+    }
+
     public void UpdateAmmoUI()
     {
         ammoText.text = currentAmmo.ToString();
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.tag == "Enemy")
+        {
+            takeDamage(1);
+        }
     }
 }
